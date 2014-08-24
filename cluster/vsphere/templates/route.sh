@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Set the default provider of Kubernetes cluster to know where to load provider-specific scripts
-# You can override the default provider by exporting the KUBERNETES_PROVIDER
-# variable in your bashrc
-#
-# The valid values: 'gce', 'azure', 'vagrant', 'local', 'vsphere'
-
-KUBERNETES_PROVIDER=${KUBERNETES_PROVIDER:-gce}
+# Add routes to all the OTHER minions.
+for (( i=0; i<${#MINION_IP_RANGES[@]}; i++)); do
+  if [ $i -ne $INDEX ]; then
+    route add -net ${MINION_IP_RANGES[i]} gw ${KUBE_MINION_IP_ADDRESSES[i]}
+  fi
+done
