@@ -14,16 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source $(dirname ${BASH_SOURCE})/config-common.sh
+function public-key {
+  local dir=${HOME}/.ssh
 
-NUM_MINIONS=2
-INSTANCE_PREFIX="e2e-test-${USER}"
+  for f in $HOME/.ssh/{id_{rsa,dsa},*}.pub; do
+    if [ -r $f ]; then
+      echo $f
+      return
+    fi
+  done
 
-MASTER_NAME="${INSTANCE_PREFIX}-master"
-MASTER_MEMORY_MB=1024
-MASTER_CPU=1
+  echo "Can't find public key file..."
+  exit 1
+}
 
-MINION_NAMES=($(eval echo ${INSTANCE_PREFIX}-minion-{1..${NUM_MINIONS}}))
-MINION_IP_RANGES=($(eval echo "10.244.{1..${NUM_MINIONS}}.0/24"))
-MINION_MEMORY_MB=1024
-MINION_CPU=1
+DISK=kube.vmdk
+GUEST_ID=debian7_64Guest
+PUBLIC_KEY_FILE=${PUBLIC_KEY_FILE-$(public-key)}
+SSH_OPTS="-oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null"
+
+# These need to be set
+#export GOVC_URL=
+#export GOVC_DATACENTER=
+#export GOVC_DATASTORE=
+#export GOVC_RESOURCE_POOL=
+#export GOVC_NETWORK=
+#export GOVC_GUEST_LOGIN='kube:kube'
