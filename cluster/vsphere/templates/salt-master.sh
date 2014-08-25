@@ -37,7 +37,6 @@ function join {
 
 cat <<EOF >/etc/salt/minion.d/grains.conf
 grains:
-  minion_ips: $(join , ${KUBE_MINION_IP_ADDRESSES[@]})
   roles:
     - kubernetes-master
 EOF
