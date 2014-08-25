@@ -110,6 +110,7 @@ function kube-up {
 
   kube-up-vm ${MASTER_NAME} ${MASTER_MEMORY_MB-1024} ${MASTER_CPU-1}
 
+  # Prints master IP, so user can log in for debugging.
   detect-master
   echo
 
@@ -152,6 +153,10 @@ function kube-up {
     echo "${FAIL} commands failed.  Exiting."
     exit 2
   fi
+
+  # Print minion IPs, so user can log in for debugging.
+  detect-minions
+  echo
 
   # Continue provisioning the master.
 
