@@ -153,48 +153,6 @@ function kube-up {
     exit 2
   fi
 
-  detect-minions
-  echo
-
-  # Add static routes to every minion to enable pods in the 10.244.x.x range to
-  # reach each other. This is suboptimal, but necessary to let every pod have
-  # its IP and have pods between minions be able to talk with each other.
-  # This will be obsolete when we figure out the right way to make this work.
-
-  for (( i=0; i<${#MINION_NAMES[@]}; i++)); do
-    (
-      echo "#! /bin/bash"
-      echo "INDEX=${i}"
-      echo "MINION_IP_RANGES=( ${MINION_IP_RANGES[@]} )"
-      echo "KUBE_MINION_IP_ADDRESSES=( ${KUBE_MINION_IP_ADDRESSES[@]} )"
-      grep -v "^#" $(dirname $0)/vsphere/templates/route.sh
-    ) > ${KUBE_TEMP}/route-${i}.sh
-
-    (
-      MINION_IP=${KUBE_MINION_IP_ADDRESSES[$i]}
-
-      govc guest.upload \
-        -vm ${MINION_NAMES[$i]} \
-        -perm 0700 \
-        -f \
-        ${KUBE_TEMP}/route-${i}.sh \
-        /home/kube/minion-route.sh
-
-      # Kickstart start script
-      kube-ssh ${MINION_IP} "sudo ~/minion-route.sh"
-    ) &
-  done
-
-  FAIL=0
-  for job in `jobs -p`
-  do
-      wait $job || let "FAIL+=1"
-  done
-  if (( $FAIL != 0 )); then
-    echo "${FAIL} commands failed.  Exiting."
-    exit 2
-  fi
-
   # Continue provisioning the master.
 
   (

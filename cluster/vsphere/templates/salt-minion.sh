@@ -40,6 +40,7 @@ grains:
   minion_ip: $(ip route get 1.1.1.1 | awk '{print $7}')
   roles:
     - kubernetes-pool
+    - kubernetes-pool-vsphere
   cbr-cidr: $MINION_IP_RANGE
 EOF
 
