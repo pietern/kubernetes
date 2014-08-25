@@ -21,20 +21,6 @@ sed -i -e "s/http.us.debian.org/mirrors.kernel.org/" /etc/apt/sources.list
 mkdir -p /etc/salt/minion.d
 echo "master: $MASTER_NAME" > /etc/salt/minion.d/master.conf
 
-# Associate minion names with their IP addresses
-for (( i=0; i<${#MINION_NAMES[@]}; i++)); do
-  if ! grep -q ${MINION_NAMES[i]} /etc/hosts; then
-    echo "Adding host entry for ${MINION_NAMES[i]}"
-    echo "${KUBE_MINION_IP_ADDRESSES[i]} ${MINION_NAMES[i]}" >> /etc/hosts
-  fi
-done
-
-function join {
-  local IFS="$1"
-  shift
-  echo "$*"
-}
-
 cat <<EOF >/etc/salt/minion.d/grains.conf
 grains:
   roles:
