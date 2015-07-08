@@ -28,6 +28,10 @@
   {% endif -%}
 {% endif -%}
 
+{% if grains.cloud is defined and grains.cloud == 'vsphere' -%}
+{% set cloud_provider = "" -%}
+{% endif -%}
+
 {% set root_ca_file = "" -%}
 
 {% if grains['cloud'] is defined and grains.cloud in [ 'aws', 'gce' ]    %}

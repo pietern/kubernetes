@@ -22,6 +22,9 @@ base:
 {% endif %}
     - logrotate
     - monit
+{% if grains['cloud'] is defined and grains['cloud'] == 'vsphere' %}
+    - static-routes
+{% endif %}
 
   'roles:kubernetes-master':
     - match: grain
@@ -31,7 +34,7 @@ base:
     - kube-controller-manager
     - kube-scheduler
     - monit
-{% if grains['cloud'] is defined and not grains.cloud in [ 'aws', 'gce', 'vagrant' ] %}
+{% if grains['cloud'] is defined and not grains.cloud in [ 'aws', 'gce', 'vagrant', 'vsphere' ] %}
     - nginx
 {% endif %}
     - cadvisor
@@ -52,11 +55,7 @@ base:
 {% if grains['cloud'] is defined and grains['cloud'] == 'azure' %}
     - openvpn
 {% endif %}
-{% if grains['cloud'] is defined and grains['cloud'] in [ 'vagrant', 'gce', 'aws' ] %}
+{% if grains['cloud'] is defined and grains['cloud'] in [ 'vagrant', 'gce', 'aws', 'vsphere' ] %}
     - docker
     - kubelet
 {% endif %}
-
-  'roles:kubernetes-pool-vsphere':
-    - match: grain
-    - static-routes

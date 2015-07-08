@@ -19,6 +19,7 @@ DISK=./kube/kube.vmdk
 GUEST_ID=debian7_64Guest
 
 INSTANCE_PREFIX=kubernetes
+NODE_INSTANCE_PREFIX="${INSTANCE_PREFIX}-minion"
 MASTER_TAG="${INSTANCE_PREFIX}-master"
 MINION_TAG="${INSTANCE_PREFIX}-minion"
 
